@@ -18,14 +18,14 @@ let parse lines =
         | Split ' ' [left; right] -> Some ((int left), (int right))
         | _ -> None)
     |> Array.choose id
-    |> (fun xs -> [for x in xs -> fst x], [for x in xs -> snd x])
-    |> (fun (x,y) -> List.sort x, List.sort y)
-    |> (fun (x,y) -> List.zip x y)
-    |> List.map (fun (x,y) -> Math.Abs(x - y))
-    |> List.sum
+    |> Array.unzip
+    |> (fun (x,y) -> Array.sort x, Array.sort y)
+    |> (fun (x,y) -> Array.zip x y)
+    |> Array.map (fun (x,y) -> abs (x - y))
+    |> Array.sum
 
-//sample.SplitOnNewLine() |> parse
-//Files[1] |> parse
+sample.SplitOnNewLine() |> parse
+Files[1] |> parse
 
 // Part 2
 
@@ -36,13 +36,13 @@ let parse' lines =
         | Split ' ' [left; right] -> Some ((int left), (int right))
         | _ -> None)
     |> Array.choose id
-    |> (fun xs -> [for x in xs -> fst x], [for x in xs -> snd x])
+    |> Array.unzip
     |> (fun (xs,ys) ->
         xs
-        |> List.map (fun x -> x * (ys |> List.filter (fun y -> y = x) |> List.length))
+        |> Array.map (fun x -> x * (ys |> Array.filter (fun y -> y = x) |> Array.length))
     )
-    |> List.sum
+    |> Array.sum
     
-//sample.SplitOnNewLine() |> parse'
+sample.SplitOnNewLine() |> parse'
 Files[1] |> parse'    
 
