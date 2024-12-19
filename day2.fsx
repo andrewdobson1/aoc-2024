@@ -11,33 +11,24 @@ let sample =
 1 3 6 7 9
 """
 
-type Direction =
-    | None = 0
-    | Increasing = 1
-    | Descrasing = 2
-
 type ReportType =
     | Unsafe = 0
     | Safe = 1
 
+let isSafe x y diffSign =
+    let diff = abs (x-y)
+    diff >= 1 && diff <= 3 && sign (x-y) = diffSign
+
 let checkReport (levels: int array)=
-    let rec checkLevel i direction =
+    let rec checkLevel i =
         if levels.Length < 2 then ReportType.Unsafe
         else if i >= levels.Length then ReportType.Safe
         else
-            match levels[i] - levels[i-1] with
-            | 0 -> ReportType.Unsafe
-            | x when x <= -1 && x >= -3 ->
-                match direction with
-                | Direction.None | Direction.Descrasing -> checkLevel (i+1) Direction.Descrasing
-                | _ -> ReportType.Unsafe
-            | x when x >= 1 && x <= 3 ->
-                match direction with
-                | Direction.None | Direction.Increasing -> checkLevel (i+1) Direction.Increasing
-                | _ -> ReportType.Unsafe
-            | _ -> ReportType.Unsafe
+            match isSafe levels[i] levels[i-1] (sign (levels[1] - levels[0])) with
+            | true -> checkLevel (i+1)
+            | false -> ReportType.Unsafe
                       
-    checkLevel 1 Direction.None
+    checkLevel 1
 
 let parseReport line =
     match line with
@@ -50,6 +41,7 @@ let parse lines =
 
 sample.SplitOnNewLine() |> parse
 Files[2] |> parse
+// answer: 246
 
 // Part 2
 
@@ -73,4 +65,5 @@ let parse' lines =
     
     
 sample.SplitOnNewLine() |> parse'
-Files[2] |> parse'    
+Files[2] |> parse'
+// answer: 318
